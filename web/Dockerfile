@@ -9,7 +9,8 @@ COPY ./templates/ /home/myapp/templates/
 COPY ./static/ /home/myapp/static/
 COPY ./app.py /home/myapp/app.py
 
-ENV MONGO_URI=mongodb://mongo:27017/ \
+ENV MONGO_HOST=mongo \
+    MONGO_PORT=27017 \
     MONGO_DB=mydatabase \
     MONGO_COLLECTION=mycollection
 

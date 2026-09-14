@@ -1,16 +1,33 @@
 import ipaddress
 import os
+from urllib.parse import quote_plus
 
 from bson import ObjectId
 from bson.errors import InvalidId
+from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
+load_dotenv()
+
 app = Flask(__name__)
 
+mongo_username = os.environ.get("MONGO_INITDB_ROOT_USERNAME")
+mongo_password = os.environ.get("MONGO_INITDB_ROOT_PASSWORD")
+mongo_host = os.environ.get("MONGO_HOST", "mongo")
+mongo_port = os.environ.get("MONGO_PORT", "27017")
+
+if mongo_username and mongo_password:
+    default_mongo_uri = (
+        f"mongodb://{quote_plus(mongo_username)}:{quote_plus(mongo_password)}"
+        f"@{mongo_host}:{mongo_port}/?authSource=admin"
+    )
+else:
+    default_mongo_uri = f"mongodb://{mongo_host}:{mongo_port}/"
+
 client = MongoClient(
-    os.environ.get("MONGO_URI", "mongodb://mongo:27017/"),
+    os.environ.get("MONGO_URI", default_mongo_uri),
     serverSelectionTimeoutMS=5000,
 )
 database = client[os.environ.get("MONGO_DB", "mydatabase")]
