@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Router Detail</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <h1>Router: {{ router.ip_address }}</h1>
+
+        {% if interface_history %}
+        <table border="1" cellpadding="2" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Interface</th>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Protocol</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for snapshot in interface_history %}
+                    {% if snapshot.parsed and snapshot.result is iterable %}
+                        {% for interface in snapshot.result %}
+                        <tr>
+                            <td>{{ snapshot.timestamp }}</td>
+                            <td>{{ interface.interface }}</td>
+                            <td>{{ interface.ip_address }}</td>
+                            <td>{{ interface.status }}</td>
+                            <td>{{ interface.proto }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td>{{ snapshot.timestamp }}</td>
+                            <td colspan="4"><pre>{{ snapshot.result }}</pre></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No interface status has been collected for this router yet.</p>
+        {% endif %}
+
+        <p><a href="{{ url_for('main') }}">Back to routers</a></p>
+    </body>
+</html>

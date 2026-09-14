@@ -38,6 +38,29 @@ services:
       - app-net
     restart: unless-stopped
 
+  worker1:
+    build: ./worker
+    env_file:
+      - .env
+    environment:
+      MONGO_HOST: 127.0.0.1
+      MONGO_PORT: "27017"
+      MONGO_DB: mydatabase
+      MONGO_RESULTS_COLLECTION: router_interface_results
+      RABBITMQ_HOST: 127.0.0.1
+      RABBITMQ_PORT: "5672"
+      ROUTER_DEVICE_TYPE: cisco_ios
+      SSH_CONNECT_TIMEOUT: "10"
+      SSH_COMMAND_TIMEOUT: "30"
+      WORKER_RETRY_INTERVAL: "5"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    network_mode: host
+    restart: unless-stopped
+
   mongo:
     image: mongo:6
     ports:

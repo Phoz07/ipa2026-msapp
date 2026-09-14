@@ -30,24 +30,63 @@
             <button type="submit">Add Router</button>
         </form>
 
-        <ul>
-            {% for router in data %}
-            <li>
-                {{ router.ip_address }} - {{ router.username }} - ••••••••
-                <form
-                    method="POST"
-                    action="{{ url_for('delete_router') }}"
-                    style="display: inline"
-                >
-                    <input
-                        type="hidden"
-                        name="router_id"
-                        value="{{ router._id }}"
-                    />
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-            {% endfor %}
-        </ul>
+        <h2>Routers</h2>
+        {% if data %}
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Router IP</th>
+                    <th>Username</th>
+                    <th>Interface status</th>
+                    <th>Last checked</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for router in data %}
+                <tr>
+                    <td>
+                        <a
+                            href="{{ url_for('router_detail', ip_address=router.ip_address) }}"
+                        >
+                            {{ router.ip_address }}
+                        </a>
+                    </td>
+                    <td>{{ router.username }}</td>
+                    <td>
+                        {% if router.latest_result %}
+                            {{ router.interfaces_up }}/{{ router.interfaces_total }} up
+                        {% else %}
+                            No interface data
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if router.latest_result %}
+                            {{ router.latest_result.timestamp }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form
+                            method="POST"
+                            action="{{ url_for('delete_router') }}"
+                            style="display: inline"
+                        >
+                            <input
+                                type="hidden"
+                                name="router_id"
+                                value="{{ router._id }}"
+                            />
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No routers have been added.</p>
+        {% endif %}
     </body>
 </html>
