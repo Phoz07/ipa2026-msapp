@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Router SSH Manager</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <h1>Router SSH Manager</h1>
+        <p>Add credentials for logging in to a router with SSH.</p>
+
+        {% if error %}
+        <p><strong>{{ error }}</strong></p>
+        {% endif %}
+
+        <form method="POST" action="/add">
+            <input
+                name="ip_address"
+                placeholder="Router IP address"
+                required
+            />
+            <input name="username" placeholder="SSH username" required />
+            <input
+                type="password"
+                name="password"
+                placeholder="SSH password"
+                required
+            />
+            <button type="submit">Add Router</button>
+        </form>
+
+        <ul>
+            {% for router in data %}
+            <li>
+                {{ router.ip_address }} - {{ router.username }} - ••••••••
+                <form
+                    method="POST"
+                    action="{{ url_for('delete_router') }}"
+                    style="display: inline"
+                >
+                    <input
+                        type="hidden"
+                        name="router_id"
+                        value="{{ router._id }}"
+                    />
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
